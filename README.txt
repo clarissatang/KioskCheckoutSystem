@@ -26,4 +26,7 @@ The column of "Sale_Rule" has to follow the following regulation:
     NOTE: if get something free, use 100% off
     e.g. buy three get two free, "Sale_Rule" must be Buy More: buy [3], get [2] [100%] off
 
-2. 
+2. There are three input files for this system.
+1) Product_Price.csv stores all the product information. (Details are explained above)
+2) Item_List.txt simulates the shopping cart for checkout, each item takes one line.
+3) Receipt_Header.txt is the template for receipt printing.
