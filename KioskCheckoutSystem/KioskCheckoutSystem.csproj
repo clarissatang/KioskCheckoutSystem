@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckoutSystem.cs" />
+    <Compile Include="CollectError.cs" />
     <Compile Include="CsvFileReader.cs" />
     <Compile Include="CsvRow.cs" />
     <Compile Include="Program.cs" />

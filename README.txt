@@ -2,7 +2,7 @@
 Checkout System Design
 ------------------------------
 
-1. Create a csv file to store all the product information. The format is
+1. Created a csv file to store all the product information. The format is
 -----------------------------------------------------------------------------------------
 Product_Name | Regular_Price | is_On_Sale | Sale_Price | is_Additional_Sale | Sale_Rule
 -----------------------------------------------------------------------------------------
@@ -30,3 +30,7 @@ The column of "Sale_Rule" has to follow the following regulation:
 1) Product_Price.csv stores all the product information. (Details are explained above)
 2) Item_List.txt simulates the shopping cart for checkout, each item takes one line.
 3) Receipt_Header.txt is the template for receipt printing.
+
+3. Writing unit test is pretty new to me, I wrote a few but I'm not sure whether it is a good unit test.
+
+4. The solution can collect all exceptions and they are saved in Error_Report.txt file.

@@ -23,3 +23,10 @@ E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\o
 E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
 E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
 E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
+E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache

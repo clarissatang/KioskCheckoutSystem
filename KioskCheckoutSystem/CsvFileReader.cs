@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*****************************************************************
+Filename:       CsvFileReader.cs
+Revised:        Date: 2017/02/23
+Revision:       Revision: 1.0.0
+
+Description:    To read data in csv file
+
+Revision log:
+* 2017-02-21: Created
+******************************************************************/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,60 +28,68 @@ namespace KioskCheckoutSystem.Data
         }
         public bool ReadRow(CsvRow row)
         {
-            row.LineText = ReadLine();
-            if (String.IsNullOrEmpty(row.LineText))
-                return false;
-
-            int pos = 0;
-            int rows = 0;
-
-            while (pos < row.LineText.Length)
+            try
             {
-                string value;
+                row.LineText = ReadLine();
+                if (String.IsNullOrEmpty(row.LineText))
+                    return false;
 
-                if (row.LineText[pos] == '"')
+                int pos = 0;
+                int rows = 0;
+
+                while (pos < row.LineText.Length)
                 {
-                    pos++;
-                    int start = pos;
-                    while (pos < row.LineText.Length)
+                    string value;
+
+                    if (row.LineText[pos] == '"')
                     {
-                        if (row.LineText[pos] == '"')
-                        {
-                            pos++;
-
-                            if (pos >= row.LineText.Length || row.LineText[pos] != '"')
-                            {
-                                pos--;
-                                break;
-                            }
-                        }
                         pos++;
+                        int start = pos;
+                        while (pos < row.LineText.Length)
+                        {
+                            if (row.LineText[pos] == '"')
+                            {
+                                pos++;
+
+                                if (pos >= row.LineText.Length || row.LineText[pos] != '"')
+                                {
+                                    pos--;
+                                    break;
+                                }
+                            }
+                            pos++;
+                        }
+                        value = row.LineText.Substring(start, pos - start);
+                        value = value.Replace("\"\"", "\"");
                     }
-                    value = row.LineText.Substring(start, pos - start);
-                    value = value.Replace("\"\"", "\"");
-                }
-                else
-                {
-                    int start = pos;
+                    else
+                    {
+                        int start = pos;
+                        while (pos < row.LineText.Length && row.LineText[pos] != ',')
+                            pos++;
+                        value = row.LineText.Substring(start, pos - start);
+                    }
+
+                    if (rows < row.Count)
+                        row[rows] = value;
+                    else
+                        row.Add(value);
+                    rows++;
+
                     while (pos < row.LineText.Length && row.LineText[pos] != ',')
                         pos++;
-                    value = row.LineText.Substring(start, pos - start);
+                    if (pos < row.LineText.Length)
+                        pos++;
                 }
-
-                if (rows < row.Count)
-                    row[rows] = value;
-                else
-                    row.Add(value);
-                rows++;
-
-                while (pos < row.LineText.Length && row.LineText[pos] != ',')
-                    pos++;
-                if (pos < row.LineText.Length)
-                    pos++;
+                while (row.Count > rows)
+                    row.RemoveAt(rows);
+                return (row.Count > 0);
             }
-            while (row.Count > rows)
-                row.RemoveAt(rows);
-            return (row.Count > 0);
-        }
+            catch (Exception ex)
+            {
+                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                return false;
+            }
+        } // END: ReadRow(CsvRow row)
     }
 }

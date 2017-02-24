@@ -6,3 +6,11 @@ E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystemTe
 E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.csprojResolveAssemblyReference.cache
 E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.dll
 E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystemTests1.dll
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystemTests1.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystem.exe
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystem.pdb
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.csprojResolveAssemblyReference.cache
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.dll
+E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.pdb
