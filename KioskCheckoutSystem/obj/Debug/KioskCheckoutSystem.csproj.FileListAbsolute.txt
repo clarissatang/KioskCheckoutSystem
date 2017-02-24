@@ -1,0 +1,25 @@
+E:\Projects for Interview\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem version 2\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\Absorb Software Interview\KioskCheckoutSystem version 3\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache
+E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\Absorb Software Interview\KioskCheckoutSystem version 4\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb

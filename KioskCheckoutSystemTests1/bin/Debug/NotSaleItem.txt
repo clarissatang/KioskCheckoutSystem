@@ -1,0 +1,6 @@
+Apple
+1.59
+No
+1.19
+No
+Group: buy [3] for $[2]

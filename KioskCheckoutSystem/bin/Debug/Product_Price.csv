@@ -1,0 +1,10 @@
+Product_Name,Regular_Price,is_On_Sale,Sale_Price,is_Additional_Sale,Sale_Rule
+Apple,1.59,Yes,1.19,Yes,Group: buy [3] for $[2]
+Orange,0.99,Yes,0.89,Yes,"Buy More: buy [1], get [1] [100%] off"
+Banana,0.79,No,0.59,No,NA
+Celery,2.99,No,2.49,No,NA
+Broccoli,1.99,Yes,1.49,No,NA
+Lettuce,1.29,No,0.99,No,NA
+Potato,0.79,No,0.59,No,NA
+Tomato,1.49,No,1.19,No,NA
+Mushroom,3.99,Yes,2.99,Yes,"Buy More: buy [2], get [1] [50%] off"
