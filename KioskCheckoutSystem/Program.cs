@@ -35,9 +35,7 @@ namespace KioskCheckoutSystem
             ReadFile readFile = new ReadFile();
 
             // Read the order file
-            Hashtable orders = readFile.GetOrders(orderFilePath);
-
-            //List<Order> orders = readFile.GetOrders(orderFilePath);
+            Hashtable orders = readFile.GetOrders(orderFilePath);            
             if (orders == null)
                 return;
 

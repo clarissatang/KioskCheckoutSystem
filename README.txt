@@ -31,6 +31,5 @@ The column of "Sale_Rule" has to follow the following regulation:
 2) Item_List.txt simulates the shopping cart for checkout, each item takes one line.
 3) Receipt_Header.txt is the template for receipt printing.
 
-3. Writing unit test is pretty new to me, I wrote a few but I'm not sure whether it is a good unit test.
 
-4. The solution can collect all exceptions and they are saved in Error_Report.txt file.
+3. The solution can collect all exceptions and they are saved in Error_Report.txt file.
