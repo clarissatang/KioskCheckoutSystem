@@ -12,5 +12,4 @@ namespace KioskCheckoutSystem
         public decimal RegularPrice;
         public decimal Saving;
     };
-    
 }

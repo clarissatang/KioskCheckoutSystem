@@ -36,7 +36,7 @@ namespace KioskCheckoutSystem
         };
         
         // Get the receipt detail for the regular sale item.
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, IteamDataBase oneItemDataBase)
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData)
         {
             try
             {
@@ -44,9 +44,9 @@ namespace KioskCheckoutSystem
                 for (int i = 0; i < quantity; i++)
                 {
                     SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                    oneItemReceipt.ProductName = oneItemDataBase.ItemDataEntry[(int)EnumItemData.ProductName];
-                    oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemDataBase.ItemDataEntry[(int)EnumItemData.RegularPrice]);
-                    oneItemReceipt.Saving = oneItemReceipt.RegularPrice - Convert.ToDecimal(oneItemDataBase.ItemDataEntry[(int)EnumItemData.SalePrice]);
+                    oneItemReceipt.ProductName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
+                    oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
+                    oneItemReceipt.Saving = oneItemReceipt.RegularPrice - Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.SalePrice]);
                     groupOneItemReceipt.Add(oneItemReceipt);
                 }
                 return groupOneItemReceipt;
@@ -59,12 +59,12 @@ namespace KioskCheckoutSystem
         }
 
         // Get the receipt detail for the buy more sale item, but 2 get 1 50% off.
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, IteamDataBase oneItemDataBase, BuyMoreSaleInfo buyMoreSaleInfo)
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData, BuyMoreSaleInfo buyMoreSaleInfo)
         {
             try
             {
-                string productName = oneItemDataBase.ItemDataEntry[(int)EnumItemData.ProductName];
-                decimal regularPrice = Convert.ToDecimal(oneItemDataBase.ItemDataEntry[(int)EnumItemData.RegularPrice]);
+                string productName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
+                decimal regularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
                 List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
                 int groupNumber = quantity / (buyMoreSaleInfo.regularPriceQuantity + buyMoreSaleInfo.salePriceQuantity);
                 int outofGroupQuantity = quantity % (buyMoreSaleInfo.regularPriceQuantity + buyMoreSaleInfo.salePriceQuantity);
@@ -119,12 +119,12 @@ namespace KioskCheckoutSystem
         }
 
         // Get the receipt detail for buy more sale item, buy 3 get 1 50% off
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, IteamDataBase oneItemDataBase, GroupSaleInfo groupSaleInfo)
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData, GroupSaleInfo groupSaleInfo)
         {
             try
             {
-                string productName = oneItemDataBase.ItemDataEntry[(int)EnumItemData.ProductName];
-                decimal regularPrice = Convert.ToDecimal(oneItemDataBase.ItemDataEntry[(int)EnumItemData.RegularPrice]);
+                string productName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
+                decimal regularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
                 List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
                 int groupNumber = quantity / groupSaleInfo.groupQuantity;
                 int outOfGroupQuantity = quantity % groupSaleInfo.groupQuantity;
@@ -168,33 +168,33 @@ namespace KioskCheckoutSystem
                 return null;
             }
         }
-        public List<SingleItemReceipt> OnSaleItem(int quantity, IteamDataBase oneItemDataBase)
+        public List<SingleItemReceipt> OnSaleItem(int quantity, OneItemData oneItemData)
         {
             try
             {
-                bool isOnAdditionalSale = oneItemDataBase.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
+                bool isOnAdditionalSale = oneItemData.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
                 List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
 
                 if (isOnAdditionalSale == true)
                 {
-                    string saleRule = oneItemDataBase.ItemDataEntry[(int)EnumItemData.SaleRule];
+                    string saleRule = oneItemData.ItemDataEntry[(int)EnumItemData.SaleRule];
 
                     if (saleRule.StartsWith(BUYMORESALE))
                     {
                         BuyMoreSaleInfo buyMoreSaleInfo = GetBuyMoreSaleDetail(saleRule);
-                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemDataBase, buyMoreSaleInfo);
+                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData, buyMoreSaleInfo);
                     }
 
                     if (saleRule.StartsWith(GROUPSALE))
                     {
                         GroupSaleInfo groupSaleInfo = GetGroupSaleDetail(saleRule);
-                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemDataBase, groupSaleInfo);
+                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData, groupSaleInfo);
 
                     }
                 }
                 else // regular sale
                 {
-                    groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemDataBase);
+                    groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData);
                 }
 
                 return groupOneItemReceipt;

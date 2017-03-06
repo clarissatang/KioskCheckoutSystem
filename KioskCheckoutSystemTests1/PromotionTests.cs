@@ -18,24 +18,24 @@ namespace KioskCheckoutSystem.Tests
         //const string NotSaleItemFile = "NotSaleItem.txt";
         //const string RegularSaleItem = "RegularSaleItem.txt";
 
-        private IteamDataBase GetOneItemDataBase(string testFile)
+        private OneItemData GetOneItemData(string testFile)
         {
             string[] data = File.ReadAllLines(testFile);
-            IteamDataBase oneItemDataBase = new IteamDataBase();
-            oneItemDataBase.ItemDataEntry = new string[data.Length];
+            OneItemData oneItemData = new OneItemData();
+            oneItemData.ItemDataEntry = new string[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
-                oneItemDataBase.ItemDataEntry[i] = data[i];
+                oneItemData.ItemDataEntry[i] = data[i];
             }
-            return oneItemDataBase;
+            return oneItemData;
         }
         
         [TestMethod()]
         public void GroupSaleTest()
         {
-            IteamDataBase oneItemDataBase = GetOneItemDataBase(GroupSaleItemFile);
+            OneItemData oneItemData = GetOneItemData(GroupSaleItemFile);
             Promotion promotion = new Promotion();
-            List<SingleItemReceipt> oneProductReceipt = promotion.OnSaleItem(5, oneItemDataBase);
+            List<SingleItemReceipt> oneProductReceipt = promotion.OnSaleItem(5, oneItemData);
             Receipt receipt = new Receipt();
             receipt.singleItemReceiptList = oneProductReceipt;
             decimal actualValue = 2 + 1.59m + 1.59m;
@@ -45,9 +45,9 @@ namespace KioskCheckoutSystem.Tests
         [TestMethod()]
         public void BuyMoreSaleTest()
         {
-            IteamDataBase oneItemDataBase = GetOneItemDataBase(BuyMoreSaleItemFile);
+            OneItemData oneItemData = GetOneItemData(BuyMoreSaleItemFile);
             Promotion promotion = new Promotion();
-            List<SingleItemReceipt> oneProductReceipt = promotion.OnSaleItem(5, oneItemDataBase);
+            List<SingleItemReceipt> oneProductReceipt = promotion.OnSaleItem(5, oneItemData);
             Receipt receipt = new Receipt();
             receipt.singleItemReceiptList = oneProductReceipt;
             decimal actualValue = 1.59m*3 + (1.59m-Math.Round(1.59m*0.4m, 2)) *2;

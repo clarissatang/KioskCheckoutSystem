@@ -22,7 +22,7 @@ namespace KioskCheckoutSystem.Data
         SaleRule
     };
 
-    public struct IteamDataBase
+    public struct OneItemData
     {
         public string[] ItemDataEntry;
     };

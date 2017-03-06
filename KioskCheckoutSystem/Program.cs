@@ -28,23 +28,25 @@ namespace KioskCheckoutSystem
             if (args.Length != 4)
                 return;
             string orderFilePath = args[0];
-            string databaseFilePath = args[1];
+            string productDatabasePath = args[1];
             string receiptHeaderFilePath = args[2];
             errorFile = args[3];
 
             ReadFile readFile = new ReadFile();
 
             // Read the order file
-            List<Order> orders = readFile.GetOrders(orderFilePath);
+            Hashtable orders = readFile.GetOrders(orderFilePath);
+
+            //List<Order> orders = readFile.GetOrders(orderFilePath);
             if (orders == null)
                 return;
 
             // Read the product database file
-            Hashtable itemDatabase = readFile.GetItemDatabase(databaseFilePath);
-            if (itemDatabase == null)
+            Hashtable allProductDatabase = readFile.GetAllProductDatabase(productDatabasePath);
+            if (allProductDatabase == null)
                 return;                   
             
-            CheckoutSystem checkoutSystem = new CheckoutSystem(itemDatabase);
+            CheckoutSystem checkoutSystem = new CheckoutSystem(allProductDatabase);
             if (checkoutSystem == null)
                 return;
 

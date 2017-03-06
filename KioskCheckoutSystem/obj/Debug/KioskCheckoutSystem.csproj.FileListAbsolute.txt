@@ -30,3 +30,10 @@ E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
 E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
 E:\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 E:\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe.config
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.exe
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.pdb
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.exe
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\KioskCheckoutSystem.pdb
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystem\obj\Debug\KioskCheckoutSystem.csprojResolveAssemblyReference.cache

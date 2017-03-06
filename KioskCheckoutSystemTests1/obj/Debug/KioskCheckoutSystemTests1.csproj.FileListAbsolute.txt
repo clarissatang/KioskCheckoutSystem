@@ -14,3 +14,11 @@ E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystem.p
 E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.csprojResolveAssemblyReference.cache
 E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.dll
 E:\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.pdb
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystemTests1.dll
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystemTests1.pdb
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystem.exe
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\bin\Debug\KioskCheckoutSystem.pdb
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.csprojResolveAssemblyReference.cache
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.dll
+E:\personal\KioskCheckoutSystem\KioskCheckoutSystemTests1\obj\Debug\KioskCheckoutSystemTests1.pdb

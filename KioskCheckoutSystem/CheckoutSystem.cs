@@ -27,19 +27,19 @@ namespace KioskCheckoutSystem
             mItemDatabase = itemDatabase;
         }
         
-        public Receipt Checkout(List<Order> orders)
+        public Receipt Checkout(Hashtable orders)
         {
             try
             {
                 Receipt receipt = new Receipt();
                 receipt.singleItemReceiptList = new List<SingleItemReceipt>();
 
-                foreach (Order oneOrder in orders)
+                foreach (string productName in orders.Keys)
                 {
-                    List<SingleItemReceipt> oneOrderReceipt = CalculateOneItemPrice(oneOrder);
+                    List<SingleItemReceipt> oneOrderReceipt = CalculateOneItemPrice(productName, (int)orders[productName]);
                     receipt.singleItemReceiptList = receipt.singleItemReceiptList.Concat(oneOrderReceipt).ToList();
                 }
-
+                
                 return receipt;
             }
             catch (Exception ex)
@@ -49,36 +49,36 @@ namespace KioskCheckoutSystem
             }
 
         } // END: public decimal calculate_total_price(...)
-        
+
         //Get the receipt for one item
-        private List<SingleItemReceipt> CalculateOneItemPrice(Order oneOrder)
+        private List<SingleItemReceipt> CalculateOneItemPrice(string productName, int quantity)
         {
             try
-            {
-                int quantity = oneOrder.Quantity;
-                IteamDataBase oneItemDataBase = (IteamDataBase)mItemDatabase[oneOrder.ProductName];
-                bool isOnSale = oneItemDataBase.ItemDataEntry[(int)EnumItemData.isOnSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
-                bool isOnAdditionalSale = oneItemDataBase.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
+            {                
+                OneItemData oneItemData = (OneItemData)mItemDatabase[productName];
+                bool isOnSale = oneItemData.ItemDataEntry[(int)EnumItemData.isOnSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
+                bool isOnAdditionalSale = oneItemData.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
 
                 List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
 
                 if (isOnSale == true)
                 {
                     Promotion promotion = new Promotion();
-                    groupOneItemReceipt = promotion.OnSaleItem(quantity, oneItemDataBase);
+                    groupOneItemReceipt = promotion.OnSaleItem(quantity, oneItemData);
                 }
                 else // not on sale, use regular price
                 {
                     for (int i = 0; i < quantity; i++)
                     {
                         SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                        oneItemReceipt.ProductName = oneItemDataBase.ItemDataEntry[(int)EnumItemData.ProductName];
-                        oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemDataBase.ItemDataEntry[(int)EnumItemData.RegularPrice]);
+                        oneItemReceipt.ProductName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
+                        oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
                         oneItemReceipt.Saving = 0;
                         groupOneItemReceipt.Add(oneItemReceipt);
                     }
                 }
                 return groupOneItemReceipt;
+                
             }
             catch (Exception ex)
             {

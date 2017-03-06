@@ -26,35 +26,25 @@ namespace KioskCheckoutSystem.Data
          *  Category the whole order
          *  e.g. Apple 5, Orange 4, Banana 7
          *  ********************************/
-        public List<Order> GetOrders(string orderFile)
+        public Hashtable GetOrders(string orderFile)
         {
             try
             {
-                List<Order> orders = new List<Order>();
-                Order oneOrder = new Order();
-
-                string[] all_items = File.ReadAllLines(orderFile);
-                foreach (string one_item in all_items)
+                Hashtable orders = new Hashtable();
+                string[] allItems = File.ReadAllLines(orderFile);
+                foreach (string oneItem in allItems)
                 {
-                    bool isExistInOrders = false;
-                    for (int i = 0; i < orders.Count; i++)
+                    if (orders.ContainsKey(oneItem) == true) // this item is in the list
                     {
-                        if (orders[i].ProductName == one_item)
-                        {
-                            oneOrder = orders[i];
-                            oneOrder.Quantity++;
-                            orders[i] = oneOrder;
-                            isExistInOrders = true;
-                            break;
-                        }
+                        int currentNumber = (int)orders[oneItem] + 1;
+                        orders[oneItem] = currentNumber;
                     }
-                    if (!isExistInOrders)
+                    else // this itme is NOT in the list
                     {
-                        oneOrder.ProductName = one_item;
-                        oneOrder.Quantity = 1;
-                        orders.Add(oneOrder);
+                        orders.Add(oneItem, 1);
                     }
                 }
+
                 return orders;
             }
             catch (Exception ex)
@@ -74,45 +64,43 @@ namespace KioskCheckoutSystem.Data
          *              Sale_Rule
          * Save the info in hashtable, Product_Name is the key             
          *******************************************************/
-        public Hashtable GetItemDatabase(string itemDataBaseFile)
+        public Hashtable GetAllProductDatabase(string productDatabasePath)
         {
             try
             {
+                Hashtable allProductDatabase = new Hashtable();
                 CsvRow row = new CsvRow();
-                MemoryStream memStream = new MemoryStream();
-                using (FileStream fileStream = File.OpenRead(itemDataBaseFile))
+                using (MemoryStream memStream = new MemoryStream())
+                using (FileStream fileStream = File.OpenRead(productDatabasePath))
                 {
                     memStream.SetLength(fileStream.Length);
                     fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
-                }
-                CsvFileReader csvFileReader = new CsvFileReader(memStream);
 
-                // Read the header, ignore this
-                csvFileReader.ReadRow(row);
+                    CsvFileReader csvFileReader = new CsvFileReader(memStream);
 
-                Hashtable itemDatabase = new Hashtable();
+                    // Read the header, ignore this
+                    csvFileReader.ReadRow(row);
 
-                while (csvFileReader.ReadRow(row))
-                {
-                    if (row.Count == 0)
-                        break;
-
-                    IteamDataBase oneItemDatabase = new IteamDataBase();
-                    oneItemDatabase.ItemDataEntry = new string[row.Count];
-
-                    oneItemDatabase.ItemDataEntry = new string[row.Count];
-                    for (int a = 0; a < row.Count; a++)
+                    while (csvFileReader.ReadRow(row))
                     {
-                        oneItemDatabase.ItemDataEntry[a] = row[a];
+                        if (row.Count == 0)
+                            break;
+
+                        OneItemData oneItemData = new OneItemData();
+                        oneItemData.ItemDataEntry = new string[row.Count];
+
+                        oneItemData.ItemDataEntry = new string[row.Count];
+                        for (int a = 0; a < row.Count; a++)
+                        {
+                            oneItemData.ItemDataEntry[a] = row[a];
+                        }
+
+                        allProductDatabase.Add(oneItemData.ItemDataEntry[(int)EnumItemData.ProductName], oneItemData);
+
                     }
-
-                    itemDatabase.Add(oneItemDatabase.ItemDataEntry[(int)EnumItemData.ProductName], oneItemDatabase);
-
                 }
-                memStream.Position = 0;
-                csvFileReader.DiscardBufferedData();
 
-                return itemDatabase;
+                return allProductDatabase;
             }
             catch (Exception ex)
             {
