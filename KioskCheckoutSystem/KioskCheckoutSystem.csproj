@@ -46,10 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuyMoreSale.cs" />
     <Compile Include="CheckoutSystem.cs" />
     <Compile Include="CollectError.cs" />
     <Compile Include="CsvFileReader.cs" />
     <Compile Include="CsvRow.cs" />
+    <Compile Include="GroupSale.cs" />
+    <Compile Include="ProductModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Promotion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="StructInKioskCheckoutSystem.Data.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.Sql.UnitTesting.targets" Condition="'$(SQLDBExtensionsRefPath)' != ''" />

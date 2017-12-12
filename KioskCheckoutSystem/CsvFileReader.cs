@@ -9,13 +9,9 @@ Revision log:
 * 2017-02-21: Created
 ******************************************************************/
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KioskCheckoutSystem.Data
+namespace KioskCheckoutSystem
 {
     public class CsvFileReader : StreamReader
     {
@@ -31,11 +27,11 @@ namespace KioskCheckoutSystem.Data
             try
             {
                 row.LineText = ReadLine();
-                if (String.IsNullOrEmpty(row.LineText))
+                if (string.IsNullOrEmpty(row.LineText))
                     return false;
 
-                int pos = 0;
-                int rows = 0;
+                var pos = 0;
+                var rows = 0;
 
                 while (pos < row.LineText.Length)
                 {
@@ -44,7 +40,7 @@ namespace KioskCheckoutSystem.Data
                     if (row.LineText[pos] == '"')
                     {
                         pos++;
-                        int start = pos;
+                        var start = pos;
                         while (pos < row.LineText.Length)
                         {
                             if (row.LineText[pos] == '"')
@@ -64,7 +60,7 @@ namespace KioskCheckoutSystem.Data
                     }
                     else
                     {
-                        int start = pos;
+                        var start = pos;
                         while (pos < row.LineText.Length && row.LineText[pos] != ',')
                             pos++;
                         value = row.LineText.Substring(start, pos - start);
@@ -87,7 +83,7 @@ namespace KioskCheckoutSystem.Data
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return false;
             }
         } // END: ReadRow(CsvRow row)

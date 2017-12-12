@@ -10,102 +10,124 @@ Revision log:
 ******************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KioskCheckoutSystem.Data;
 
 namespace KioskCheckoutSystem
 {
     public class Promotion
     {
-        const string GROUPSALE = "Group";
-        const string BUYMORESALE = "Buy More";
+        private const string GROUPSALE = "Group";
+        private const string BUYMORESALE = "Buy More";
 
-        private struct GroupSaleInfo
-        {
-            public int groupQuantity;
-            public decimal groupPrice;
-        };
+        private readonly ProductModel _thisProductData;
 
-        private struct BuyMoreSaleInfo
+        public Promotion(ProductModel thisProductData)
         {
-            public int regularPriceQuantity;
-            public int salePriceQuantity;
-            public decimal discountPercent;
-        };
-        
-        // Get the receipt detail for the regular sale item.
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData)
+            _thisProductData = thisProductData;
+        }
+
+        public List<SingleItemReceipt> OnSaleItemReceipt(int quantity)
         {
             try
             {
-                List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
-                for (int i = 0; i < quantity; i++)
+                var isOnAdditionalSale = _thisProductData.IsAdditionalSale;
+                var groupOneItemReceipt = new List<SingleItemReceipt>();
+
+                if (isOnAdditionalSale)
                 {
-                    SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                    oneItemReceipt.ProductName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
-                    oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
-                    oneItemReceipt.Saving = oneItemReceipt.RegularPrice - Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.SalePrice]);
+                    var saleRule = _thisProductData.SaleRule;
+
+                    if (saleRule.StartsWith(BUYMORESALE))
+                    {
+                        var buyMoreSaleInfo = GetBuyMoreSaleDetail(saleRule);
+                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, buyMoreSaleInfo);
+                    }
+                    else if (saleRule.StartsWith(GROUPSALE))
+                    {
+                        var groupSaleInfo = GetGroupSaleDetail(saleRule);
+                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, groupSaleInfo);
+
+                    }
+                }
+                else // regular sale
+                {
+                    groupOneItemReceipt = GetSaleRuleReceipt(quantity);
+                }
+
+                return groupOneItemReceipt;
+            }
+            catch (Exception ex)
+            {
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
+                return null;
+            }
+        }
+
+        // Get the receipt detail for the regular sale item.
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity)
+        {
+            try
+            {
+                var groupOneItemReceipt = new List<SingleItemReceipt>();
+                for (var i = 0; i < quantity; i++)
+                {
+                    var oneItemReceipt = new SingleItemReceipt
+                    {
+                        ProductName = _thisProductData.Name,
+                        RegularPrice = _thisProductData.RegularPrice,
+                        Saving = _thisProductData.RegularPrice - _thisProductData.SalePrice
+                    };
                     groupOneItemReceipt.Add(oneItemReceipt);
                 }
                 return groupOneItemReceipt;
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
         }
 
         // Get the receipt detail for the buy more sale item, but 2 get 1 50% off.
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData, BuyMoreSaleInfo buyMoreSaleInfo)
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, BuyMoreSale buyMoreSale)
         {
             try
             {
-                string productName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
-                decimal regularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
-                List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
-                int groupNumber = quantity / (buyMoreSaleInfo.regularPriceQuantity + buyMoreSaleInfo.salePriceQuantity);
-                int outofGroupQuantity = quantity % (buyMoreSaleInfo.regularPriceQuantity + buyMoreSaleInfo.salePriceQuantity);
+                var productName = _thisProductData.Name;
+                var regularPrice = _thisProductData.RegularPrice;
+                var groupOneItemReceipt = new List<SingleItemReceipt>();
+                var groupNumber = quantity / (buyMoreSale.RegularPriceQuantity + buyMoreSale.SalePriceQuantity);
+                var outofGroupQuantity = quantity % (buyMoreSale.RegularPriceQuantity + buyMoreSale.SalePriceQuantity);
 
-                int quo = outofGroupQuantity / buyMoreSaleInfo.regularPriceQuantity;
-                int rem = outofGroupQuantity % buyMoreSaleInfo.regularPriceQuantity;
+                var quo = outofGroupQuantity / buyMoreSale.RegularPriceQuantity;
+                var rem = outofGroupQuantity % buyMoreSale.RegularPriceQuantity;
 
-                int regularPriceNumber = 0;
+                var regularPriceNumber = quo == 0
+                    ? groupNumber * buyMoreSale.RegularPriceQuantity + rem
+                    : (groupNumber + quo) * buyMoreSale.RegularPriceQuantity;
+                
+                var salePriceNumber = quantity - regularPriceNumber;
 
-                if (quo == 0)
+                for (var i = 0; i < regularPriceNumber; i++)
                 {
-                    regularPriceNumber = groupNumber * buyMoreSaleInfo.regularPriceQuantity + rem;
-                }
-                else
-                {
-                    regularPriceNumber = (groupNumber + quo) * buyMoreSaleInfo.regularPriceQuantity;
-                }
-                int salePriceNumber = quantity - regularPriceNumber;
-
-                for (int i = 0; i < regularPriceNumber; i++)
-                {
-                    SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                    oneItemReceipt.ProductName = productName;
-                    oneItemReceipt.RegularPrice = regularPrice;
-                    oneItemReceipt.Saving = 0;
+                    var oneItemReceipt = new SingleItemReceipt
+                    {
+                        ProductName = productName,
+                        RegularPrice = regularPrice,
+                        Saving = 0
+                    };
                     groupOneItemReceipt.Add(oneItemReceipt);
                 }
 
-                for (int i = 0; i < salePriceNumber; i++)
+                for (var i = 0; i < salePriceNumber; i++)
                 {
-                    SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                    oneItemReceipt.ProductName = productName;
-                    oneItemReceipt.RegularPrice = regularPrice;
-                    if (buyMoreSaleInfo.discountPercent == 1) // it is free
+                    var oneItemReceipt = new SingleItemReceipt
                     {
-                        oneItemReceipt.Saving = regularPrice;
-                    }
-                    else
-                    {
-                        oneItemReceipt.Saving = Math.Round(regularPrice * buyMoreSaleInfo.discountPercent, 2);
-                    }
+                        ProductName = productName,
+                        RegularPrice = regularPrice,
+                        Saving = buyMoreSale.DiscountPercent == 1
+                            ? regularPrice
+                            : Math.Round(regularPrice * buyMoreSale.DiscountPercent, 2)
+                    };
                     groupOneItemReceipt.Add(oneItemReceipt);
                 }
 
@@ -113,38 +135,40 @@ namespace KioskCheckoutSystem
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
         }
 
         // Get the receipt detail for buy more sale item, buy 3 get 1 50% off
-        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, OneItemData oneItemData, GroupSaleInfo groupSaleInfo)
+        private List<SingleItemReceipt> GetSaleRuleReceipt(int quantity, GroupSale groupSale)
         {
             try
             {
-                string productName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
-                decimal regularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
-                List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
-                int groupNumber = quantity / groupSaleInfo.groupQuantity;
-                int outOfGroupQuantity = quantity % groupSaleInfo.groupQuantity;
-                for (int i = 0; i < groupNumber; i++) // use group price
+                var productName = _thisProductData.Name;
+                var regularPrice = _thisProductData.RegularPrice;
+                var groupOneItemReceipt = new List<SingleItemReceipt>();
+                var groupNumber = quantity / groupSale.GroupQuantity;
+                var outOfGroupQuantity = quantity % groupSale.GroupQuantity;
+                for (var i = 0; i < groupNumber; i++) // use group price
                 {
-                    decimal priceTotalTmp = 0.0m;
-                    for (int j = 0; j < groupSaleInfo.groupQuantity; j++)
+                    var priceTotalTmp = 0.0m;
+                    for (var j = 0; j < groupSale.GroupQuantity; j++)
                     {
-                        SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                        oneItemReceipt.ProductName = productName;
-                        oneItemReceipt.RegularPrice = regularPrice;
+                        var oneItemReceipt = new SingleItemReceipt
+                        {
+                            ProductName = productName,
+                            RegularPrice = regularPrice
+                        };
                         decimal salePrice;
 
-                        if (j == groupSaleInfo.groupQuantity - 1) // this is the last one, price might be different, e.g., buy 3 for $2
+                        if (j == groupSale.GroupQuantity - 1) // this is the last one, price might be different, e.g., buy 3 for $2
                         {
-                            salePrice = groupSaleInfo.groupPrice - priceTotalTmp;
+                            salePrice = groupSale.GroupPrice - priceTotalTmp;
                         }
                         else
                         {
-                            salePrice = Math.Round(groupSaleInfo.groupPrice / groupSaleInfo.groupQuantity, 2);
+                            salePrice = Math.Round(groupSale.GroupPrice / groupSale.GroupQuantity, 2);
                             priceTotalTmp += salePrice;
                         }
                         oneItemReceipt.Saving = regularPrice - salePrice;
@@ -152,133 +176,99 @@ namespace KioskCheckoutSystem
                     }
                 }
 
-                for (int i = 0; i < outOfGroupQuantity; i++) // use regular price
+                for (var i = 0; i < outOfGroupQuantity; i++) // use regular price
                 {
-                    SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                    oneItemReceipt.ProductName = productName;
-                    oneItemReceipt.RegularPrice = regularPrice;
-                    oneItemReceipt.Saving = 0;
+                    var oneItemReceipt = new SingleItemReceipt
+                    {
+                        ProductName = productName,
+                        RegularPrice = regularPrice,
+                        Saving = 0
+                    };
                     groupOneItemReceipt.Add(oneItemReceipt);
                 }
                 return groupOneItemReceipt;
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
         }
-        public List<SingleItemReceipt> OnSaleItem(int quantity, OneItemData oneItemData)
-        {
-            try
-            {
-                bool isOnAdditionalSale = oneItemData.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
-                List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
-
-                if (isOnAdditionalSale == true)
-                {
-                    string saleRule = oneItemData.ItemDataEntry[(int)EnumItemData.SaleRule];
-
-                    if (saleRule.StartsWith(BUYMORESALE))
-                    {
-                        BuyMoreSaleInfo buyMoreSaleInfo = GetBuyMoreSaleDetail(saleRule);
-                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData, buyMoreSaleInfo);
-                    }
-
-                    if (saleRule.StartsWith(GROUPSALE))
-                    {
-                        GroupSaleInfo groupSaleInfo = GetGroupSaleDetail(saleRule);
-                        groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData, groupSaleInfo);
-
-                    }
-                }
-                else // regular sale
-                {
-                    groupOneItemReceipt = GetSaleRuleReceipt(quantity, oneItemData);
-                }
-
-                return groupOneItemReceipt;
-            }
-            catch (Exception ex)
-            {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
-                return null;
-            }
-        } //END: OnSaleAdditional()
+        
 
         // get the parameters for group sale
-        private GroupSaleInfo GetGroupSaleDetail(string saleRule)
+        private static GroupSale GetGroupSaleDetail(string saleRule)
         {
-            GroupSaleInfo groupSaleInfo = new GroupSaleInfo();
+            var groupSale = new GroupSale();
             try
             {                
                 // format in database: Group: buy [3] for $[2]
-                int index_start = saleRule.IndexOf("[");
-                int index_end = saleRule.IndexOf("]");
-                string groupQuantityString = "";
-                for (int i = index_start + 1; i < index_end; i++)
+                var indexStart = saleRule.IndexOf("[", StringComparison.InvariantCulture);
+                var indexEnd = saleRule.IndexOf("]", StringComparison.InvariantCulture);
+                var groupQuantityString = "";
+                for (var i = indexStart + 1; i < indexEnd; i++)
                 {
                     groupQuantityString += saleRule[i];
                 }
-                groupSaleInfo.groupQuantity = Convert.ToInt32(groupQuantityString);
+                groupSale.GroupQuantity = Convert.ToInt32(groupQuantityString);
 
-                saleRule = saleRule.Substring(index_end + 1);
-                index_start = saleRule.IndexOf("[");
-                index_end = saleRule.IndexOf("]");
-                string groupPriceString = "";
-                for (int i = index_start + 1; i < index_end; i++)
+                saleRule = saleRule.Substring(indexEnd + 1);
+                indexStart = saleRule.IndexOf("[", StringComparison.InvariantCulture);
+                indexEnd = saleRule.IndexOf("]", StringComparison.InvariantCulture);
+                var groupPriceString = "";
+                for (var i = indexStart + 1; i < indexEnd; i++)
                 {
                     groupPriceString += saleRule[i];
                 }
-                groupSaleInfo.groupPrice = Convert.ToDecimal(groupPriceString);
+                groupSale.GroupPrice = Convert.ToDecimal(groupPriceString);
                 
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);                
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);                
             }
-            return groupSaleInfo;
+            return groupSale;
         }
 
         // get the parameters for buy more sale
-        private BuyMoreSaleInfo GetBuyMoreSaleDetail(string saleRule)
+        private static BuyMoreSale GetBuyMoreSaleDetail(string saleRule)
         {
-            BuyMoreSaleInfo buyMoreSaleInfo = new BuyMoreSaleInfo();
+            var buyMoreSaleInfo = new BuyMoreSale();
             try
             {
                 // format in database: Additional: buy [1] get [1] [50%] off
-                int index_start = saleRule.IndexOf("[");
-                int index_end = saleRule.IndexOf("]");
-                string regularPriceQuantityString = "";
-                for (int i = index_start + 1; i < index_end; i++)
+                var indexStart = saleRule.IndexOf("[", StringComparison.InvariantCulture);
+                var indexEnd = saleRule.IndexOf("]", StringComparison.InvariantCulture);
+                var regularPriceQuantityString = "";
+                for (var i = indexStart + 1; i < indexEnd; i++)
                 {
                     regularPriceQuantityString += saleRule[i];
                 }
-                buyMoreSaleInfo.regularPriceQuantity = Convert.ToInt32(regularPriceQuantityString);
+                buyMoreSaleInfo.RegularPriceQuantity = Convert.ToInt32(regularPriceQuantityString);
 
-                saleRule = saleRule.Substring(index_end + 1);
-                index_start = saleRule.IndexOf("[");
-                index_end = saleRule.IndexOf("]");
-                string salePriceQuantityString = "";
-                for (int i = index_start + 1; i < index_end; i++)
+                saleRule = saleRule.Substring(indexEnd + 1);
+                indexStart = saleRule.IndexOf("[", StringComparison.InvariantCulture);
+                indexEnd = saleRule.IndexOf("]", StringComparison.InvariantCulture);
+                var salePriceQuantityString = "";
+                for (var i = indexStart + 1; i < indexEnd; i++)
                 {
                     salePriceQuantityString += saleRule[i];
                 }
-                buyMoreSaleInfo.salePriceQuantity = Convert.ToInt32(salePriceQuantityString);
+                buyMoreSaleInfo.SalePriceQuantity = Convert.ToInt32(salePriceQuantityString);
 
-                saleRule = saleRule.Substring(index_end + 1);
-                index_start = saleRule.IndexOf("[");
-                index_end = saleRule.IndexOf("]");
-                string discountPercentString = "";
-                for (int i = index_start + 1; i < index_end; i++)
+                saleRule = saleRule.Substring(indexEnd + 1);
+                indexStart = saleRule.IndexOf("[", StringComparison.InvariantCulture);
+                indexEnd = saleRule.IndexOf("]", StringComparison.InvariantCulture);
+                var discountPercentString = "";
+                for (var i = indexStart + 1; i < indexEnd; i++)
                 {
                     discountPercentString += saleRule[i];
                 }
-                buyMoreSaleInfo.discountPercent = Convert.ToDecimal(discountPercentString.Substring(0, discountPercentString.Length - 1)) / 100.0m;
+                buyMoreSaleInfo.DiscountPercent = Convert.ToDecimal(discountPercentString.Substring(0, discountPercentString.Length - 1)) / 100.0m;
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
             }
             return buyMoreSaleInfo;
         }

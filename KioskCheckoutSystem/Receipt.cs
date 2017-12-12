@@ -12,26 +12,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KioskCheckoutSystem
 {
     public class Receipt
     {
-        public List<SingleItemReceipt> singleItemReceiptList { get; set; }
+        public List<SingleItemReceipt> SingleItemReceiptList { get; set; }
 
         // Calculate the total price based on the receipt information
         public decimal TotalPrice
         {
             get
             {
-                decimal totalPrice = 0.0m;
-                foreach (SingleItemReceipt singleItemReceipt in singleItemReceiptList)
-                {
-                    totalPrice += singleItemReceipt.RegularPrice - singleItemReceipt.Saving;
-                }
-                return totalPrice;
+                return SingleItemReceiptList.Sum(s => s.RegularPrice - s.Saving);
             }
         }
 
@@ -39,13 +32,13 @@ namespace KioskCheckoutSystem
         {
             try
             {
-                string[] receiptHeader = File.ReadAllLines(receiptHeaderFile);
-                foreach (string oneLine in receiptHeader)
+                var receiptHeader = File.ReadAllLines(receiptHeaderFile);
+                foreach (var oneLine in receiptHeader)
                 {
                     Console.WriteLine(oneLine);
                 }
 
-                foreach (SingleItemReceipt singleItemReceipt in singleItemReceiptList)
+                foreach (var singleItemReceipt in SingleItemReceiptList)
                 {
                     if (singleItemReceipt.ProductName.Length > 7)
                         Console.WriteLine("{0}\t{1}\t\t{2}", singleItemReceipt.ProductName,
@@ -62,7 +55,7 @@ namespace KioskCheckoutSystem
             }
             catch(Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
             }
         }
         

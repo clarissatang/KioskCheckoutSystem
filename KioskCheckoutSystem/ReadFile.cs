@@ -10,12 +10,7 @@ Revision log:
 ******************************************************************/
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace KioskCheckoutSystem.Data
 {
@@ -26,33 +21,40 @@ namespace KioskCheckoutSystem.Data
          *  Category the whole order
          *  e.g. Apple 5, Orange 4, Banana 7
          *  ********************************/
-        public Hashtable GetOrders(string orderFile)
+        private readonly string _orderFile;
+        private readonly string _allProductDataFile;
+
+        public ReadFile(string orderFilePath, string productDatabasePath)
+        {
+            _orderFile = orderFilePath;
+            _allProductDataFile = productDatabasePath;
+        }
+
+        public Hashtable GetOrders()
         {
             try
             {
-                Hashtable orders = new Hashtable();
-                string[] allItems = File.ReadAllLines(orderFile);
-                foreach (string oneItem in allItems)
+                var orders = new Hashtable();
+                var allItems = File.ReadAllLines(_orderFile);
+                foreach (var oneItem in allItems)
                 {
-                    if (orders.ContainsKey(oneItem) == true) // this item is in the list
+                    if (orders.ContainsKey(oneItem))
                     {
-                        int currentNumber = (int)orders[oneItem] + 1;
-                        orders[oneItem] = currentNumber;
+                        orders[oneItem] = (int)orders[oneItem] + 1;
                     }
-                    else // this itme is NOT in the list
+                    else
                     {
                         orders.Add(oneItem, 1);
                     }
                 }
-
                 return orders;
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
-        } // END: GetOrders(...)
+        }
 
         /*********************************************************
          * Read in the product database
@@ -64,19 +66,19 @@ namespace KioskCheckoutSystem.Data
          *              Sale_Rule
          * Save the info in hashtable, Product_Name is the key             
          *******************************************************/
-        public Hashtable GetAllProductDatabase(string productDatabasePath)
+        public Hashtable GetAllProductData()
         {
             try
             {
-                Hashtable allProductDatabase = new Hashtable();
-                CsvRow row = new CsvRow();
-                using (MemoryStream memStream = new MemoryStream())
-                using (FileStream fileStream = File.OpenRead(productDatabasePath))
+                var allProductData = new Hashtable();
+                var row = new CsvRow();
+                using (var memStream = new MemoryStream())
+                using (var fileStream = File.OpenRead(_allProductDataFile))
                 {
                     memStream.SetLength(fileStream.Length);
                     fileStream.Read(memStream.GetBuffer(), 0, (int)fileStream.Length);
 
-                    CsvFileReader csvFileReader = new CsvFileReader(memStream);
+                    var csvFileReader = new CsvFileReader(memStream);
 
                     // Read the header, ignore this
                     csvFileReader.ReadRow(row);
@@ -85,26 +87,24 @@ namespace KioskCheckoutSystem.Data
                     {
                         if (row.Count == 0)
                             break;
-
-                        OneItemData oneItemData = new OneItemData();
-                        oneItemData.ItemDataEntry = new string[row.Count];
-
-                        oneItemData.ItemDataEntry = new string[row.Count];
-                        for (int a = 0; a < row.Count; a++)
+                        var oneProductData = new ProductModel()
                         {
-                            oneItemData.ItemDataEntry[a] = row[a];
-                        }
+                            Name = row[0],
+                            RegularPrice = Convert.ToDecimal(row[1]),
+                            IsOnSale = row[2].Equals("Yes",StringComparison.CurrentCultureIgnoreCase),
+                            SalePrice = Convert.ToDecimal(row[3]),
+                            IsAdditionalSale = row[4].Equals("Yes", StringComparison.CurrentCultureIgnoreCase),
+                            SaleRule = row[5]
+                        };
 
-                        allProductDatabase.Add(oneItemData.ItemDataEntry[(int)EnumItemData.ProductName], oneItemData);
-
+                        allProductData.Add(oneProductData.Name, oneProductData);
                     }
                 }
-
-                return allProductDatabase;
+                return allProductData;
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
         }

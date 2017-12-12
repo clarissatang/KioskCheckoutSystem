@@ -9,51 +9,39 @@ Revision log:
 * 2017-02-21: Created
 ******************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using KioskCheckoutSystem.Data;
 
 namespace KioskCheckoutSystem
 {
     public class Program
     {
-        public static string errorFile;
-        static void Main(string[] args)
+        public static string ErrorFile;
+        private static void Main(string[] args)
         {
             if (args.Length != 4)
                 return;
-            string orderFilePath = args[0];
-            string productDatabasePath = args[1];
-            string receiptHeaderFilePath = args[2];
-            errorFile = args[3];
+            var orderFilePath = args[0];
+            var productDatabasePath = args[1];
+            var receiptHeaderFilePath = args[2];
+            ErrorFile = args[3];
 
-            ReadFile readFile = new ReadFile();
+            var readFile = new ReadFile(orderFilePath, productDatabasePath);
 
             // Read the order file
-            Hashtable orders = readFile.GetOrders(orderFilePath);            
+            var orders = readFile.GetOrders(); 
             if (orders == null)
                 return;
 
             // Read the product database file
-            Hashtable allProductDatabase = readFile.GetAllProductDatabase(productDatabasePath);
-            if (allProductDatabase == null)
+            var allProductData = readFile.GetAllProductData();
+            if (allProductData == null)
                 return;                   
             
-            CheckoutSystem checkoutSystem = new CheckoutSystem(allProductDatabase);
-            if (checkoutSystem == null)
-                return;
+            var checkoutSystem = new CheckoutSystem(allProductData, orders);
 
-            Receipt totalOrderReceipt = checkoutSystem.Checkout(orders);
-            if (totalOrderReceipt == null)
-                return;
+            var totalOrderReceipt = checkoutSystem.Checkout();
 
             totalOrderReceipt.PrintReceipt(receiptHeaderFilePath);
-            
         }
     }
 }

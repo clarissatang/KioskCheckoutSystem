@@ -8,72 +8,71 @@ Description:    Calculate
 Revision log:
 * 2017-02-21: Created
 ******************************************************************/
-using KioskCheckoutSystem.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace KioskCheckoutSystem
 {
     public class CheckoutSystem
     {
-        private Hashtable mItemDatabase;
-        public  CheckoutSystem(Hashtable itemDatabase)
+        private readonly Hashtable _allProductData;
+        private readonly Hashtable _orders;
+        public  CheckoutSystem(Hashtable allProductData, Hashtable orders)
         {
-            mItemDatabase = itemDatabase;
+            _allProductData = allProductData;
+            _orders = orders;
         }
         
-        public Receipt Checkout(Hashtable orders)
+        public Receipt Checkout()
         {
             try
             {
-                Receipt receipt = new Receipt();
-                receipt.singleItemReceiptList = new List<SingleItemReceipt>();
-
-                foreach (string productName in orders.Keys)
+                var receipt = new Receipt
                 {
-                    List<SingleItemReceipt> oneOrderReceipt = CalculateOneItemPrice(productName, (int)orders[productName]);
-                    receipt.singleItemReceiptList = receipt.singleItemReceiptList.Concat(oneOrderReceipt).ToList();
+                    SingleItemReceiptList = new List<SingleItemReceipt>()
+                };
+
+                foreach (string productName in _orders.Keys)
+                {
+                    var oneOrderReceipt = CalculateOneItemPrice(productName, (int)_orders[productName]);
+                    receipt.SingleItemReceiptList = receipt.SingleItemReceiptList.Concat(oneOrderReceipt).ToList();
                 }
                 
                 return receipt;
             }
             catch (Exception ex)
             {                
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
 
-        } // END: public decimal calculate_total_price(...)
-
-        //Get the receipt for one item
-        private List<SingleItemReceipt> CalculateOneItemPrice(string productName, int quantity)
+        }
+        
+        private IEnumerable<SingleItemReceipt> CalculateOneItemPrice(string productName, int quantity)
         {
             try
             {                
-                OneItemData oneItemData = (OneItemData)mItemDatabase[productName];
-                bool isOnSale = oneItemData.ItemDataEntry[(int)EnumItemData.isOnSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
-                bool isOnAdditionalSale = oneItemData.ItemDataEntry[(int)EnumItemData.isAdditionalSale].Equals("Yes", StringComparison.CurrentCultureIgnoreCase);
+                var thisProductData = (ProductModel)_allProductData[productName];
 
-                List<SingleItemReceipt> groupOneItemReceipt = new List<SingleItemReceipt>();
+                var groupOneItemReceipt = new List<SingleItemReceipt>();
 
-                if (isOnSale == true)
+                if (thisProductData.IsOnSale)
                 {
-                    Promotion promotion = new Promotion();
-                    groupOneItemReceipt = promotion.OnSaleItem(quantity, oneItemData);
+                    var promotion = new Promotion(thisProductData);
+                    groupOneItemReceipt = promotion.OnSaleItemReceipt(quantity);
                 }
-                else // not on sale, use regular price
+                else
                 {
-                    for (int i = 0; i < quantity; i++)
+                    for (var i = 0; i < quantity; i++)
                     {
-                        SingleItemReceipt oneItemReceipt = new SingleItemReceipt();
-                        oneItemReceipt.ProductName = oneItemData.ItemDataEntry[(int)EnumItemData.ProductName];
-                        oneItemReceipt.RegularPrice = Convert.ToDecimal(oneItemData.ItemDataEntry[(int)EnumItemData.RegularPrice]);
-                        oneItemReceipt.Saving = 0;
+                        var oneItemReceipt = new SingleItemReceipt
+                        {
+                            ProductName = thisProductData.Name,
+                            RegularPrice = thisProductData.RegularPrice,
+                            Saving = 0
+                        };
                         groupOneItemReceipt.Add(oneItemReceipt);
                     }
                 }
@@ -82,11 +81,11 @@ namespace KioskCheckoutSystem
             }
             catch (Exception ex)
             {
-                CollectError.CollectErrorToFile(ex, Program.errorFile);
+                CollectError.CollectErrorToFile(ex, Program.ErrorFile);
                 return null;
             }
 
-        } // END: CalculateOneItemPrice(...)
+        }
         
     }
 }

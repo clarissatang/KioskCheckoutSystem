@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace KioskCheckoutSystem
 {
-    public struct SingleItemReceipt
+    public class SingleItemReceipt
     {
-        public string ProductName;
-        public decimal RegularPrice;
-        public decimal Saving;
-    };
+        public string ProductName { get; set; }
+        public decimal RegularPrice { get; set; }
+        public decimal Saving { get; set; }
+    }
 }
+
